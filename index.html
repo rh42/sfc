@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>A Gentle Tour of SFC</title>
+
+  <meta name="description" content="A gentle tour of structure–function coupling: why structural and functional connectivity mismatch, how communication models bridge the gap, and what SFC actually scores.">
+
+  <meta property="og:title" content="A Gentle Tour of Structure–Function Coupling">
+  <meta property="og:description" content="A gentle tour of structure–function coupling: why structural and functional connectivity mismatch, how communication models bridge the gap, and what SFC actually scores.">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="A Gentle Tour of Structure–Function Coupling">
+  <meta name="twitter:description" content="A gentle tour of structure–function coupling: why structural and functional connectivity mismatch, how communication models bridge the gap, and what SFC actually scores.">
+
+  <!-- IBM Plex Sans + Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23F97316' fill-opacity='0.25'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23F97316'/%3E%3C/svg%3E">
+
+  <script>
+    // Defaults exposed to main.js. The marked block below is what the host
+    // rewrites on tweak changes — keep it valid JSON.
+    window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "accent": "#F97316",
+      "fcOpacity": 0.25,
+      "pathSpeed": 600,
+      "showHulls": true
+    }/*EDITMODE-END*/;
+  </script>
+</head>
+<body>
+<div id="mobile-gate">
+    <div class="mobile-gate-content">
+      <div class="site-header__mark" style="margin-bottom: 24px;">
+        <span class="mark-dot"></span>
+        <span class="mark-text">SFC&nbsp;/&nbsp;Structural–Functional Coupling</span>
+      </div>
+      <h2 class="mobile-gate-title">Desktop Experience</h2>
+      <p class="mobile-gate-text">
+        This interactive essay relies heavily on dense matrix visualizations, precise hover states, and hardware-accelerated rendering.
+      </p>
+      <p class="mobile-gate-text">
+        To preserve the integrity of the data storytelling, this experience is designed <span style="color: var(--amber); font-weight: 500;">exclusively for desktop</span>.
+      </p>
+      
+      <a class="mobile-gate-btn" href="mailto:?subject=Read%20Later:%20SFC%20Mismatch&body=Here%20is%20the%20link%20to%20view%20the%20interactive%20essay%20on%20desktop:%20https://yourwebsite.com">
+        Email a link to yourself
+      </a>
+    </div>
+  </div>
+
+  <div id="resize-gate">
+    <div class="resize-gate-content">
+      <div class="site-header__mark" style="margin-bottom: 24px;">
+        <span class="mark-dot"></span>
+        <span class="mark-text">SFC&nbsp;/&nbsp;Structural–Functional Coupling</span>
+      </div>
+      <h2 class="mobile-gate-title">Window too narrow</h2>
+      <p class="mobile-gate-text">
+        This data visualization requires a wider viewport to render the complex side-by-side matrices correctly.
+      </p>
+      <p class="mobile-gate-text" style="color: var(--amber); font-weight: 500; margin-top: 12px;">
+        Please maximize or expand your browser window to continue.
+      </p>
+    </div>
+  </div>
+<!-- ───────────────────────── LANDING ───────────────────────── -->
+  <div id="landing">
+    <canvas id="landing-canvas"></canvas>
+    <div class="landing-copy">
+      <div class="landing-quote">
+        "The aim of science is not things themselves,<br>
+        but the relations among things."
+      </div>
+      <div class="landing-attribution">— Poincaré, 1905</div>
+      <div class="landing-subcopy">
+        A century later, we have better tools and the same question.
+      </div>
+      <div class="landing-scroll-prompt">
+        <span>Scroll to see how this plays out in the brain</span>
+        <svg class="landing-arrow" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M19 12l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────────── HEADER ───────────────────────── -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <div class="site-header__mark">
+        <span class="mark-dot"></span>
+        <span class="mark-text">SFC&nbsp;/&nbsp;Structural–Functional Coupling</span>
+      </div>
+      <nav class="site-header__nav">
+        <span class="nav-step is-active">01 &nbsp;The Mismatch</span>
+        <span class="nav-step">02 &nbsp;How Signals Travel</span>
+        <span class="nav-step">03 &nbsp;What SFC Measures</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ───────────────────────── INTRO ───────────────────────── -->
+  <section class="intro">
+    <div class="intro__inner">
+      <div class="chapter-mark">
+        <span class="chapter-mark__num">01</span>
+        <span class="chapter-mark__rule" aria-hidden="true"></span>
+        <span class="chapter-mark__label">The Mismatch</span>
+      </div>
+      <h1 class="intro__title">
+        Two ways of measuring the same brain tell very different stories.
+      </h1>
+      <p class="intro__lede">
+        Structural connectivity is the wiring. Functional connectivity is the pattern
+        of activity riding on top of it. They only partly overlap, and that gap is the
+        whole puzzle. You cannot just lay one map on the other and call it a day.
+      </p>
+      <div class="intro__meta">
+        <span class="meta-pair"><span class="meta-key">Scroll</span><span class="meta-val">to advance</span></span>
+        <span class="meta-pair"><span class="meta-key">Hover</span><span class="meta-val">a node to inspect</span></span>
+        <span class="meta-pair"><span class="meta-key">Click</span><span class="meta-val">the pulsing pair</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── SCROLLY ───────────────────────── -->
+  <section class="scrolly" id="scrolly-beat-1">
+
+    <!-- Sticky graphic -->
+    <div class="scrolly__graphic">
+      <div class="graphic-frame">
+
+        <!-- Top-left readout -->
+        <div class="graphic-readout">
+          <div class="readout-row">
+            <span class="readout-key">STATE</span>
+            <span class="readout-val" id="readout-state">SC ONLY</span>
+          </div>
+          <div class="readout-row">
+            <span class="readout-key">EDGES</span>
+            <span class="readout-val" id="readout-edges">11 STRUCTURAL</span>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="graphic-legend">
+          <div class="legend-row">
+            <svg class="legend-swatch" width="28" height="10" viewBox="0 0 28 10">
+              <line x1="0" y1="5" x2="28" y2="5" stroke="#2A2A2C" stroke-width="2.5" />
+            </svg>
+            <span class="legend-label">Structural (SC)</span>
+          </div>
+          <div class="legend-row">
+            <svg class="legend-swatch" width="28" height="10" viewBox="0 0 28 10">
+              <line x1="0" y1="5" x2="28" y2="5" stroke="#F97316" stroke-width="1" stroke-opacity="0.55" />
+            </svg>
+            <span class="legend-label">Functional (FC)</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-node"></span>
+            <span class="legend-label">Node — sized by degree</span>
+          </div>
+        </div>
+
+        <!-- The SVG canvas D3 draws into -->
+        <svg id="graph" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet" aria-label="Brain network graphic"></svg>
+
+        <!-- Tooltip (DOM, not SVG, for type fidelity) -->
+        <div class="tooltip" id="tooltip" aria-hidden="true">
+          <div class="tooltip__label" id="tooltip-label">—</div>
+          <div class="tooltip__desc" id="tooltip-desc">—</div>
+          <div class="tooltip__meta" id="tooltip-meta">—</div>
+          <div class="tooltip__cta" id="tooltip-cta" hidden>
+            <span class="tooltip__cta-dot" aria-hidden="true"></span>
+            <span class="tooltip__cta-text">Click pulse pair</span>
+          </div>
+        </div>
+
+        <!-- Schematic disclaimer (bottom-center) -->
+        <p class="graphic-disclaimer" id="b1-disclaimer">
+          Connections are schematic — representative of known macroscale white-matter
+          tracts, not individual tractography.
+        </p>
+      </div>
+    </div>
+
+    <!-- Scrolling text -->
+    <div class="scrolly__text">
+
+      <article class="step" data-step="1">
+        <div class="step__marker">
+          <span class="step__num">1.1</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">The structural connectome is sparse.</h2>
+        <p class="step__body">
+          These are white-matter pathways estimated from diffusion MRI. Only some region
+          pairs have a direct structural link. That is not a flaw in the map. The brain
+          is just <span class="tooltip-anchor" data-tooltip="At least at the macroscale. Locally, it is still doing its best impression of spaghetti.">not as well-connected as it thinks it is</span>.
+        </p>
+        <p class="step__caption">
+          Unimodal regions (V1, V2, A1, S1, M1) sit on the left.
+          Transmodal hubs (PCC, mPFC, dlPFC, IPL, ACC, Ins) sit on the right.
+        </p>
+      </article>
+
+      <article class="step" data-step="2">
+        <div class="step__marker">
+          <span class="step__num">1.2</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">Functional connectivity is dense — every pair has a relationship.</h2>
+        <p class="step__body">
+          Now look at resting-state BOLD correlations. Every pair of regions gets a
+          value, even pairs with no wire between them. The pulsing amber pair is one
+          example: structurally unconnected, functionally in sync. The wiring does not
+          explain it. That is the problem.
+        </p>
+        <p class="step__caption">
+          The mismatch is the whole problem. You cannot just correlate these two matrices —
+          their zero-structures don't agree.
+        </p>
+      </article>
+
+      <article class="step" data-step="3">
+        <div class="step__marker">
+          <span class="step__num">1.3</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">So how does the signal get there?</h2>
+        <p class="step__body">
+          Hover any node to see its direct links. Then <strong>click the pulsing pair</strong>.
+          No direct tract, but the signal finds a way through intermediate regions, like a
+          commute with two changes and a long wait at the second stop. Each hop lights up
+          as the path unfolds.
+        </p>
+        <p class="step__caption">
+          This indirect path is why we need <em>communication models</em>.
+          They turn a sparse wire-map into a full prediction by modelling how signal walks the graph.
+        </p>
+      </article>
+
+      <!-- Spacer at end so last step can settle in the trigger zone -->
+      <div class="step-spacer" aria-hidden="true"></div>
+    </div>
+
+  </section>
+
+  <!-- ───────────────────────── INTRO · BEAT 2 ───────────────────────── -->
+  <section class="intro intro--beat-2">
+    <div class="intro__inner">
+      <div class="chapter-mark">
+        <span class="chapter-mark__num">02</span>
+        <span class="chapter-mark__rule" aria-hidden="true"></span>
+        <span class="chapter-mark__label">How Signals Travel</span>
+      </div>
+      <h1 class="intro__title">
+        A sparse wiring diagram<br />
+        does not predict itself.
+      </h1>
+    <p class="intro__lede">
+      To go from anatomy to function, the network needs a theory of how signals get
+      around. Three classic ideas — shortest path, random walk, and communicability —
+      take the same sparse wiring and produce three quite different answers. Think of
+      it as three different theories of <span class="tooltip-anchor" data-tooltip="Shortest path: someone has the floor plan and uses it. Random walk: people just talk to whoever is nearby. Communicability: everyone tells everyone, but short routes count more than epic detours.">how rumours spread through an office</span>.
+    </p>
+      <div class="intro__meta">
+        <span class="meta-pair"><span class="meta-key">Scroll</span><span class="meta-val">to advance</span></span>
+        <span class="meta-pair"><span class="meta-key">Toggle</span><span class="meta-val">a model under B</span></span>
+        <span class="meta-pair"><span class="meta-key">Hover</span><span class="meta-val">a cell to inspect</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── SCROLLY · BEAT 2 ───────────────────────── -->
+  <section class="scrolly scrolly--beat-2" id="scrolly-beat-2">
+
+    <!-- Sticky graphic -->
+    <div class="scrolly__graphic scrolly__graphic--beat-2">
+      <div class="graphic-frame graphic-frame--beat-2" id="frame-beat-2">
+
+        <!-- Top-left readout (no STEP row; STATE + MODEL only) -->
+        <div class="graphic-readout">
+          <div class="readout-row">
+            <span class="readout-key">VIEW</span>
+            <span class="readout-val" id="readout2-state">A → B</span>
+          </div>
+          <div class="readout-row">
+            <span class="readout-key">MODEL</span>
+            <span class="readout-val" id="readout2-model">SPL</span>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="graphic-legend graphic-legend--beat-2">
+          <div class="legend-row">
+            <span class="legend-cell legend-cell--lo"></span>
+            <span class="legend-cell legend-cell--mid"></span>
+            <span class="legend-cell legend-cell--hi"></span>
+            <span class="legend-label">weak — strong</span>
+          </div>
+          <div class="legend-row">
+            <svg class="legend-swatch" width="28" height="10" viewBox="0 0 28 10">
+              <line x1="0" y1="5" x2="28" y2="5" stroke="#F97316" stroke-width="2" />
+            </svg>
+            <span class="legend-label">Signal / Highlight</span>
+          </div>
+        </div>
+
+        <!-- ── 2.1 : DUAL MATRIX (A → B) ── -->
+        <div class="b2-dual" id="b2-dual" aria-hidden="true">
+
+          <div class="b2-mat-pane">
+            <div class="b2-mat-cap">
+              <span class="b2-mat-cap__key">A</span>
+              <span class="b2-mat-cap__txt">Structural · sparse</span>
+            </div>
+            <svg id="matrix-a" class="b2-dual-svg" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" aria-label="Matrix A — structural"></svg>
+          </div>
+
+          <div class="b2-mat-arrow" aria-hidden="true">
+            <span class="b2-mat-arrow__glyph">→</span>
+            <span class="b2-mat-arrow__txt">model</span>
+          </div>
+
+          <div class="b2-mat-pane">
+            <div class="b2-mat-cap">
+              <span class="b2-mat-cap__key">B</span>
+              <span class="b2-mat-cap__txt">Predicted FC · full</span>
+            </div>
+            <svg id="matrix-b" class="b2-dual-svg" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" aria-label="Matrix B — predicted functional connectivity"></svg>
+
+            <!-- Small model toggle (SPL / MFPT / COMM) updates Matrix B only -->
+            <div class="b2-mini-toggle" id="b2-mini-toggle" role="group" aria-label="Communication model">
+              <button class="b2-mini-btn is-active" type="button" data-model="shortest">SPL</button>
+              <button class="b2-mini-btn" type="button" data-model="random">MFPT</button>
+              <button class="b2-mini-btn" type="button" data-model="comm">COMM</button>
+            </div>
+          </div>
+
+          <div class="b2-dual-tip" id="b2-dual-tip" aria-hidden="true">
+            <span class="b2-dual-tip__pair" id="b2-dual-tip-pair">—</span>
+            <span class="b2-dual-tip__vals">
+              <span class="b2-dual-tip__a">A = <span id="b2-dual-tip-a">—</span></span>
+              <span class="b2-dual-tip__b">B = <span id="b2-dual-tip-b">—</span></span>
+            </span>
+          </div>
+        </div>
+
+        <!-- ── 2.1–2.3 : SINGLE GRAPH (+ matrix on 2.1) ── -->
+        <div class="b2-stage" id="b2-stage" aria-hidden="true">
+          <div class="b2-graph-wrap">
+            <svg id="graph2" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet" aria-label="Brain network — Beat 2"></svg>
+          </div>
+
+          <div class="b2-matrix-wrap" id="b2-matrix-wrap" aria-hidden="true">
+            <div class="b2-matrix-caption">
+              <span class="b2-matrix-caption__key">A</span>
+              <span class="b2-matrix-caption__txt">Adjacency Matrix · SC weights</span>
+            </div>
+            <svg id="matrix" viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" aria-label="Adjacency matrix"></svg>
+            <div class="b2-matrix-tip" id="b2-matrix-tip" aria-hidden="true">SC weight: <span id="b2-matrix-tip-val">—</span></div>
+          </div>
+        </div>
+
+        <!-- Model toggle (only visible on step 2.3) -->
+        <div class="b2-models" id="b2-models" aria-hidden="true">
+          <div class="b2-models__row">
+            <button class="b2-model-btn is-active" type="button" data-model="shortest">Shortest&nbsp;Path</button>
+            <button class="b2-model-btn" type="button" data-model="random">Random&nbsp;Walk</button>
+            <button class="b2-model-btn" type="button" data-model="comm">Communicability</button>
+          </div>
+          <div class="b2-model-desc" id="b2-model-desc"></div>
+        </div>
+
+        <!-- Replay (only on 2.3) -->
+        <button class="replay-hint replay-hint--beat-2" type="button" id="b2-replay">Replay</button>
+
+        <!-- Disclaimer: visible only on step 2.2 ("numbers illustrative") -->
+        <p class="graphic-disclaimer" id="b2-disclaimer">
+          Weights are illustrative — a schematic for reading the matrix, not a numerical simulation.
+        </p>
+      </div>
+    </div>
+
+    <!-- Scrolling text -->
+    <div class="scrolly__text">
+
+      <article class="step" data-step="5">
+        <div class="step__marker">
+          <span class="step__num">2.1</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">Same wiring. Now in grid form.</h2>
+        <p class="step__body">
+          Entry <em>[i, j]</em> is the connection strength between region <em>i</em> and region <em>j</em>.
+          Hover any dark cell — its edge lights up in the graph. Hover an edge — its cell lights up
+          in the matrix.
+        </p>
+        <p class="step__caption">
+          This is the adjacency matrix <strong>A</strong> in full. Most entries are zero.
+          A lot of nothing, which turns out to be very informative.
+        </p>
+      </article>
+
+      <article class="step" data-step="6">
+        <div class="step__marker">
+          <span class="step__num">2.2</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">Same anatomy. Three rules. Three different routes.</h2>
+        <p class="step__body">
+          Take a pair with no direct wire — <strong>PCC → A1</strong> — and ask how each model
+          accounts for their connection. Toggle to see the same question answered three
+          different ways. Same wiring, very different logic.
+        </p>
+        <p class="step__caption">
+          In one benchmark study, MFPT was the strongest single global predictor of
+          functional connectivity, with communicability close behind it.
+        </p>
+      </article>
+
+      <article class="step" data-step="7">
+        <div class="step__marker">
+          <span class="step__num">2.3</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">The model does one job: turn <em>A</em> into <em>B</em>.</h2>
+        <p class="step__body">
+          <span class="tooltip-anchor" data-tooltip="Grumpy but reliable: expensive to change once set."><strong>A</strong></span> is the wiring — sparse, mostly zero. <span class="tooltip-anchor" data-tooltip="More flexible: changes with state, task, and mood, but still tied to A more than it would like to admit."><strong>B</strong></span> is the connectivity
+          pattern the model predicts from that wiring. Sparse becomes full. Now there is
+          something to compare with real functional data.
+        </p>
+        <p class="step__caption">
+          Toggle the model under B. A never changes. B does, because the rule changes.
+          Hover any cell to see its partner on the other side. Two matrices, one comparison.
+          That is SFC. Next: what to do with it.
+        </p>
+      </article>
+
+      <div class="step-spacer" aria-hidden="true"></div>
+    </div>
+
+  </section>
+
+  <!-- ───────────────────────── INTRO · BEAT 3 ───────────────────────── -->
+  <section class="intro intro--beat-3">
+    <div class="intro__inner">
+      <div class="chapter-mark">
+        <span class="chapter-mark__num">03</span>
+        <span class="chapter-mark__rule" aria-hidden="true"></span>
+        <span class="chapter-mark__label">What SFC Measures</span>
+      </div>
+      <h1 class="intro__title">
+        The prediction is only useful<br />
+        if we can score it.
+      </h1>
+      <p class="intro__lede">
+        The communication model turned sparse wiring into a dense prediction. Now line that prediction up against what the brain actually does, region by region. The score for how well they match is structure–function coupling. Finally, a number.
+      </p>
+      <div class="intro__meta">
+        <span class="meta-pair"><span class="meta-key">Scroll</span><span class="meta-val">to advance</span></span>
+        <span class="meta-pair"><span class="meta-key">Hover</span><span class="meta-val">a cell to compare</span></span>
+        <span class="meta-pair"><span class="meta-key">Toggle</span><span class="meta-val">a region in 3.2</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── SCROLLY · BEAT 3 ───────────────────────── -->
+  <section class="scrolly scrolly--beat-3" id="scrolly-beat-3">
+
+    <div class="scrolly__graphic scrolly__graphic--beat-3">
+      <div class="graphic-frame graphic-frame--beat-3" id="frame-beat-3">
+
+        <div class="graphic-readout">
+          <div class="readout-row">
+            <span class="readout-key">VIEW</span>
+            <span class="readout-val" id="readout3-state">COMPARE</span>
+          </div>
+        </div>
+
+        <!-- ── 3.1 / 3.2 : PREDICTED vs ACTUAL ── -->
+        <div class="b3-compare" id="b3-compare" aria-hidden="true">
+
+          <div class="b2-mat-pane">
+            <div class="b2-mat-cap">
+              <span class="b2-mat-cap__key">B</span>
+              <span class="b2-mat-cap__txt">Predicted FC</span>
+            </div>
+            <svg id="b3-matrix-pred" class="b2-dual-svg" viewBox="0 0 320 320"
+                 preserveAspectRatio="xMidYMid meet" aria-label="Predicted FC matrix"></svg>
+          </div>
+
+          <div class="b2-mat-arrow" aria-hidden="true">
+            <span class="b3-vs-glyph">vs</span>
+          </div>
+
+          <div class="b2-mat-pane">
+            <div class="b2-mat-cap">
+              <span class="b2-mat-cap__key">FC</span>
+              <span class="b2-mat-cap__txt" id="b3-actual-cap">Actual</span>
+            </div>
+            <svg id="b3-matrix-actual" class="b2-dual-svg b3-actual-svg" viewBox="0 0 320 320"
+                 preserveAspectRatio="xMidYMid meet" aria-label="Actual FC matrix"></svg>
+          </div>
+
+          <div class="b2-dual-tip" id="b3-tip" aria-hidden="true">
+            <span class="b2-dual-tip__pair" id="b3-tip-pair">—</span>
+            <span class="b2-dual-tip__vals">
+              <span class="b2-dual-tip__a">pred = <span id="b3-tip-pred">—</span></span>
+              <span class="b2-dual-tip__b">actual = <span id="b3-tip-actual">—</span></span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Region selector (3.2 only) -->
+        <div class="b3-region-sel" id="b3-region-sel" aria-hidden="true">
+          <button class="b3-region-btn is-active" type="button" data-region="S1">S1 — high SFC</button>
+          <button class="b3-region-btn" type="button" data-region="PCC">PCC — low SFC</button>
+        </div>
+
+        <!-- Score bar (3.2 only) -->
+        <div class="b3-score-bar" id="b3-score-bar" aria-hidden="true">
+          <span class="b3-score-bar__label">SFC score</span>
+          <div class="b3-score-bar__track">
+            <div class="b3-score-bar__fill" id="b3-score-fill"></div>
+          </div>
+          <span class="b3-score-bar__val" id="b3-score-val">—</span>
+        </div>
+
+        <!-- ── 3.3 : GRADIENT GRAPH ── -->
+        <div class="b3-gradient-wrap" id="b3-gradient-wrap" aria-hidden="true">
+          <svg id="graph3" viewBox="0 0 800 600"
+               preserveAspectRatio="xMidYMid meet" aria-label="SFC gradient — brain network"></svg>
+          <div class="b3-grad-legend">
+            <span class="b3-grad-legend__lo">Low SFC</span>
+            <div class="b3-grad-legend__bar"></div>
+            <span class="b3-grad-legend__hi">High SFC</span>
+          </div>
+        </div>
+
+        <!-- Gradient hover card -->
+        <div class="b3-gradient-tip" id="b3-gradient-tip" aria-hidden="true">
+          <div class="b3-gradient-tip__label" id="b3-gt-label">—</div>
+          <div class="b3-gradient-tip__sfc" id="b3-gt-sfc">—</div>
+          <div class="b3-gradient-tip__desc" id="b3-gt-desc">—</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="scrolly__text">
+
+      <article class="step" data-step="8">
+        <div class="step__marker">
+          <span class="step__num">3.1</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">The model made its bet. Here is what the brain did.</h2>
+        <p class="step__body">
+          Left: what the structural communication model predicted. Right: what the brain
+          actually measured at rest. The two patterns overlap, but not perfectly. The glowing
+          cells mark where the gap is largest.
+        </p>
+        <p class="step__caption">
+          Hover any cell to see the predicted value, the actual value, and the gap.
+          Small gap: good model. Large gap: <span class="tooltip-anchor" data-tooltip="Every model is wrong, some are useful, and some are especially wrong in the precuneus.">the brain had other plans</span>.
+        </p>
+      </article>
+
+      <article class="step" data-step="9">
+        <div class="step__marker">
+          <span class="step__num">3.2</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">One region. Two rows. The match is the score.</h2>
+        <p class="step__body">
+          The highlighted row is one region's full connectivity profile across all
+          other regions. Toggle between a sensory region and a default-mode hub.
+          The closer the predicted row tracks the actual row, the higher that region's
+          <strong>SFC score</strong>.
+        </p>
+        <p class="step__caption">
+          High match means structure accounts for more of the functional pattern, so SFC is high.
+          Low match means function is less closely aligned with structure, so SFC is low.
+        </p>
+      </article>
+
+      <article class="step" data-step="10">
+        <div class="step__marker">
+          <span class="step__num">3.3</span>
+          <span class="step__rule" aria-hidden="true"></span>
+        </div>
+        <h2 class="step__title">Every region gets a score. A gradient emerges.</h2>
+        <p class="step__body">
+          Map the SFC score back onto the network. A pattern appears: primary sensory
+          and motor regions tend to score high, while default-mode and other association
+          areas tend to score lower. In other words, structure explains more of the
+          functional pattern in some parts of cortex than in others.
+        </p>
+        <p class="step__caption">
+          This gradient has been <span class="tooltip-anchor" data-tooltip="Yes, someone has plotted this against cortical hierarchy, evolutionary expansion, myelin, and a few thousand genes. It still shows up.">reported across datasets, methods, and age ranges</span>.
+          Lower SFC in association cortex is typically read as flexibility rather than
+          failure: the wiring underdetermines the function, leaving room for a wider
+          range of activity patterns.
+        </p>
+      </article>
+
+      <div class="step-spacer" aria-hidden="true"></div>
+    </div>
+
+  </section>
+
+  <!-- ───────────────────────── CODA ───────────────────────── -->
+  <section class="coda">
+
+    <!-- Synthesis -->
+    <div class="coda__synthesis">
+      <div class="chapter-mark">
+        <span class="chapter-mark__num">—</span>
+        <span class="chapter-mark__rule" aria-hidden="true"></span>
+        <span class="chapter-mark__label">Summary</span>
+      </div>
+      <h2 class="coda__title">SFC = how well the wiring predicts the activity pattern.</h2>
+      <p class="coda__lede">
+        Start with sparse anatomy. Run it through a communication model. Compare with
+        what the brain actually does. The result, region by region, is an SFC score.
+        High in sensory systems, lower in association cortex, and robust enough to show
+        up across datasets, methods, and labs.
+      </p>
+    </div>
+
+    <!-- Fact cards -->
+    <div class="coda__cards">
+
+      <div class="coda-card">
+        <div class="coda-card__kicker">Across the lifespan</div>
+        <div class="coda-card__stat"><span class="tooltip-anchor" data-tooltip="This is cross-sectional. No one was kept in a scanner from age 7 to 84. Yet.">7 → 84</span></div>
+        <p class="coda-card__body">
+          In one large cross-sectional sample spanning ages 7 to 84, SFC was highest in
+          early adulthood and lower in both younger and older participants. Age-related
+          declines were especially marked in sensory and motor regions, even though these
+          regions had the highest SFC in young adults.
+        </p>
+        <div class="coda-card__source">Zamani Esfahlani et al., 2022</div>
+      </div>
+
+      <div class="coda-card">
+        <div class="coda-card__kicker">Heritability</div>
+        <div class="coda-card__stat"><span class="tooltip-anchor" data-tooltip="High heritability does not mean fixed. Brains still learn. Genes just help set the baseline wiring–function handshake.">h² = 0.78</span></div>
+        <p class="coda-card__body">
+          Regional SFC shows substantial heritability. In one study, subcortical
+          structure–function coupling reached median h² values around 0.78, comparable
+          to highly heritable traits. Spatial patterns of SFC heritability also differed
+          from SC heritability, pointing to a partly distinct genetic phenotype.
+        </p>
+        <div class="coda-card__source">Gu et al., 2021</div>
+      </div>
+
+      <div class="coda-card">
+        <div class="coda-card__kicker">Individual fingerprint</div>
+        <div class="coda-card__stat"><span class="tooltip-anchor" data-tooltip="Good news: your SFC pattern is stable. Less good news: you cannot use it as a password.">r = 0.977</span></div>
+        <p class="coda-card__body">
+          In a test–retest subsample scanned twice about six months apart, regional SFC
+          patterns were highly stable: the mean difference across sessions was essentially
+          zero and the test–retest correlation reached r = 0.977. Much of this individual
+          "fingerprint" was carried by transmodal regions, where structure–function
+          alignment is weaker and more person-specific.
+        </p>
+        <div class="coda-card__source">Gu et al., 2021</div>
+      </div>
+
+    </div>
+
+    <!-- References -->
+    <div class="coda__refs">
+      <h3 class="coda__refs-title">Key sources</h3>
+      <ul class="ref-list">
+
+        <li class="ref-item">
+          <div class="ref-item__authors">Fotiadis et al.</div>
+          <div class="ref-item__title">Structure-function coupling in macroscale human brain networks</div>
+          <div class="ref-item__journal">Nature Reviews Neuroscience, 2024</div>
+        </li>
+
+        <li class="ref-item">
+          <div class="ref-item__authors">Zamani Esfahlani et al.</div>
+          <div class="ref-item__title">Local structure-function relationships in human brain networks across the lifespan</div>
+          <div class="ref-item__journal">Nature Communications, 2022</div>
+        </li>
+
+        <li class="ref-item">
+          <div class="ref-item__authors">Gu et al.</div>
+          <div class="ref-item__title">Heritability and interindividual variability of regional structure-function coupling</div>
+          <div class="ref-item__journal">Nature Communications, 2021</div>
+        </li>
+
+        <li class="ref-item">
+          <div class="ref-item__authors">Preti &amp; Van De Ville</div>
+          <div class="ref-item__title">Decoupling of brain function from structure reveals regional behavioral specialization</div>
+          <div class="ref-item__journal">Nature Communications, 2019</div>
+        </li>
+
+        <li class="ref-item">
+          <div class="ref-item__authors">Seguin, Razi &amp; Zalesky</div>
+          <div class="ref-item__title">Inferring neural signalling directionality from undirected structural connectomes</div>
+          <div class="ref-item__journal">Nature Communications, 2019</div>
+        </li>
+
+        <li class="ref-item">
+          <div class="ref-item__authors">van den Heuvel &amp; Sporns</div>
+          <div class="ref-item__title">Rich-club organization of the human connectome</div>
+          <div class="ref-item__journal">Journal of Neuroscience, 2011</div>
+        </li>
+
+      </ul>
+
+      <!-- Static gradient network — visual terminus -->
+      <svg class="coda-network" viewBox="108 105 582 330" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- SC edges -->
+        <line x1="175" y1="198" x2="244" y2="138" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="175" y1="198" x2="285" y2="248" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="138" y1="290" x2="285" y2="248" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="285" y1="248" x2="215" y2="360" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="285" y1="248" x2="430" y2="405" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="408" y1="258" x2="285" y2="248" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="408" y1="258" x2="540" y2="348" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="510" y1="220" x2="660" y2="232" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="510" y1="220" x2="430" y2="405" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="510" y1="220" x2="590" y2="135" stroke="#D0CCC6" stroke-width="1.5"/>
+        <line x1="660" y1="232" x2="590" y2="135" stroke="#D0CCC6" stroke-width="1.5"/>
+        <!-- Nodes: unimodal → amber -->
+        <circle cx="175" cy="198" r="12" fill="#F97316"/> <!-- V1  s=0.22 -->
+        <circle cx="244" cy="138" r="12" fill="#E87A2D"/> <!-- V2  s=0.20 -->
+        <circle cx="138" cy="290" r="12" fill="#D78144"/> <!-- A1  s=0.18 -->
+        <circle cx="285" cy="248" r="12" fill="#F17722"/> <!-- S1  s=0.21 -->
+        <circle cx="215" cy="360" r="12" fill="#E07E39"/> <!-- M1  s=0.19 -->
+        <!-- Nodes: transmodal → blue -->
+        <circle cx="408" cy="258" r="12" fill="#9C9A95"/> <!-- Ins   s=0.11 -->
+        <circle cx="430" cy="405" r="12" fill="#909BA5"/> <!-- IPL   s=0.09 -->
+        <circle cx="540" cy="348" r="12" fill="#7D9DBC"/> <!-- ACC   s=0.06 -->
+        <circle cx="510" cy="220" r="12" fill="#719ECC"/> <!-- PCC   s=0.04 -->
+        <circle cx="590" cy="135" r="12" fill="#779EC4"/> <!-- dlPFC s=0.05 -->
+        <circle cx="660" cy="232" r="12" fill="#6B9FD4"/> <!-- mPFC  s=0.03 -->
+      </svg>
+
+    </div>
+
+  </section>
+
+  <!-- ───────────────────────── FOOTER ───────────────────────── -->
+<footer class="site-footer">
+  <span class="footer-text">
+    <span class="footer-text__main">
+      Made with sparse wiring, dense thoughts, and loosely coupled expectations by @jelliwolf.
+    </span>
+    <span class="footer-text__hover">
+      Made with sparse wiring, dense thoughts, and a tolerable amount of model error by @jelliwolf.
+    </span>
+  </span>
+</footer>
+
+  <!-- ───────────────────────── LIBS + APP ───────────────────────── -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/scrollama@3.2.0/build/scrollama.min.js"></script>
+  <script src="landing.js"></script>
+  <script src="main.js"></script>
+  <script src="tweaks.js"></script>
+
+  <!-- Narrative tooltip — handles .tooltip-anchor[data-tooltip] in text only -->
+  <script>
+  (function () {
+    var tip = document.createElement('div');
+    tip.className = 'narrative-tooltip';
+    document.body.appendChild(tip);
+
+    function show(anchor) {
+      tip.textContent = anchor.dataset.tooltip;
+      tip.classList.add('is-visible');
+      position(anchor);
+    }
+
+    function hide() {
+      tip.classList.remove('is-visible');
+    }
+
+    function position(anchor) {
+      var r = anchor.getBoundingClientRect();
+      var gap = 8;
+      var top = r.top - tip.offsetHeight - gap;
+      if (top < 8) top = r.bottom + gap;
+      var left = r.left + r.width / 2 - tip.offsetWidth / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - tip.offsetWidth - 8));
+      tip.style.top = top + 'px';
+      tip.style.left = left + 'px';
+    }
+
+    document.querySelectorAll('.tooltip-anchor').forEach(function (el) {
+      el.addEventListener('mouseenter', function () { show(el); });
+      el.addEventListener('mouseleave', hide);
+      el.addEventListener('focus', function () { show(el); });
+      el.addEventListener('blur', hide);
+    });
+  })();
+  </script>
+  <script data-goatcounter="https://sfc.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
