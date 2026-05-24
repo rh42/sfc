@@ -1794,9 +1794,9 @@ const revealObserver = new IntersectionObserver((entries, observer) => {
   threshold: 0.15 // Triggers when 15% of the element enters the screen
 });
 
-// Attach it to Intros, Sticky Graphics
+// Attach it to Intros, Sticky Graphics, AND Coda
 document
-  .querySelectorAll('.intro, .figure-container')
+  .querySelectorAll('.intro, .figure-container, .coda')
   .forEach(el => {
     revealObserver.observe(el);
   });

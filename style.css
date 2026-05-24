@@ -2092,6 +2092,58 @@ html, body {
   .ref-list { grid-template-columns: 1fr; }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   CODA: HUMAN-PACE STAGGERED FLOAT
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Base state: Everything starts invisible and nudged down */
+.coda__synthesis, 
+.coda-card, 
+.coda__refs, 
+.coda-network {
+  opacity: 0;
+  transform: translateY(24px); /* Slightly deeper start for a smoother drift */
+  transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1), 
+              transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 2. Reveal state: Wide, rhythmic delays */
+.coda.is-revealed .coda__synthesis {
+  opacity: 1; transform: translateY(0); transition-delay: 0s;
+}
+
+/* Wide staggers for reading-intensive cards */
+.coda.is-revealed .coda-card:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.6s; }
+.coda.is-revealed .coda-card:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 1.2s; }
+.coda.is-revealed .coda-card:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 1.8s; }
+
+/* References and network arrive after the cards are fully "read" */
+.coda.is-revealed .coda__refs {
+  opacity: 1; transform: translateY(0); transition-delay: 3.0s;
+}
+
+.coda.is-revealed .coda-network {
+  opacity: 1; transform: translateY(0); transition-delay: 3.2s;
+}
+
+/* Target the circles inside your network */
+.coda-network circle {
+  /* Default opacity */
+  opacity: 1; 
+  /* We use a long, gentle ease-in-out cycle */
+  animation: star-breathe 6s ease-in-out infinite;
+}
+
+/* Create the randomized stagger using nth-child */
+.coda-network circle:nth-child(even) { animation-delay: 0s; }
+.coda-network circle:nth-child(odd)  { animation-delay: 3s; }
+.coda-network circle:nth-child(3n)   { animation-delay: 1.5s; }
+
+@keyframes star-breathe {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; } /* Dims down, but stays visible */
+}
+
 /* ─────────────────────────── LANDING ─────────────────────────── */
 #landing {
   position: relative;
