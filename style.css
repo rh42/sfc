@@ -2037,6 +2037,16 @@ html, body {
   color: var(--ink-300);
 }
 
+.coda__outro {
+  margin: 6rem auto 8rem;
+  max-width: 48rem;
+  text-align: center;
+  font-family: var(--syne);
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--ink-900);
+}
+
 /* References */
 .coda__refs {
   max-width: 860px;
@@ -2100,7 +2110,8 @@ html, body {
 .coda__synthesis, 
 .coda-card, 
 .coda__refs, 
-.coda-network {
+.coda-network,
+.coda__outro {
   opacity: 0;
   transform: translateY(24px); /* Slightly deeper start for a smoother drift */
   transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1), 
@@ -2117,13 +2128,17 @@ html, body {
 .coda.is-revealed .coda-card:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 1.2s; }
 .coda.is-revealed .coda-card:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 1.8s; }
 
+.coda.is-revealed .coda__outro {
+  opacity: 1; transform: translateY(0); transition-delay: 2.2s;
+} 
+
 /* References and network arrive after the cards are fully "read" */
 .coda.is-revealed .coda__refs {
   opacity: 1; transform: translateY(0); transition-delay: 3.0s;
 }
 
 .coda.is-revealed .coda-network {
-  opacity: 1; transform: translateY(0); transition-delay: 3.2s;
+  opacity: 1; transform: translateY(0); transition-delay: 3.4s;
 }
 
 /* Target the circles inside your network */
